@@ -46,7 +46,7 @@ function li_getPostsFuture($since, $to) {
   <meta name="apple-mobile-web-app-capable" content="yes" /> 
   <meta name="apple-mobile-web-app-status-bar-style" content="black" /> 
   <meta name="format-detection" content="telephone=no" /> 
-  <link rel="stylesheet" type="text/css" href="wxedit.css" /> 
+  <link rel="stylesheet" type="text/css" href="../newPulgins/weixin/wxedit.css" /> 
   <title><?php echo $posttime; ?></title> 
  </head> 
  <body id="activity-detail" class="zh_CN "> 
@@ -72,19 +72,26 @@ function li_getPostsFuture($since, $to) {
              } else if (get_post_meta($post->ID, lec_campus, true) == 'xiamen') {
               $where = '【厦门市区】';
              } else if (get_post_meta($post->ID, lec_campus, true) == 'xiangan') {
-              $where = '【翔安市区】';
+              $where = '【翔安校区】';
              } else if (get_post_meta($post->ID, lec_campus, true) == 'zhangzhou') {
               $where = '【漳州校区】';
              } 
-             
-            $where.= get_post_meta($post->ID, lec_campus, true);
+            
+            $where.= get_post_meta($post->ID, lec_where, true); 
             $where = "地点：$where";
             $lec_aboutspeaker = get_post_meta($post->ID, lec_aboutspeaker, true); //主讲人信息
-            $lec_aboutspeaker = "主讲人信息：$lec_aboutspeaker";
+            if($lec_aboutspeaker) $lec_aboutspeaker = "主讲人信息：$lec_aboutspeaker";
             $lec_about = get_post_meta($post->ID, lec_about, true);
-            $lec_about = "简介：$lec_about";
+            if($lec_about)	$lec_about = "简介：$lec_about";
+            
+            //标签
+						$tags = wp_get_post_tags($post->ID);
+						$lec_tag = "";
+						foreach($tags as $tag) $lec_tag = $lec_tag." ".$tag->name;
+						if($lec_tag) $lec_tag = "标签：$lec_tag";
+						
             echo  
-         '<section class="lec_feed_detail"> 
+         '<section class="lec_feed"> 
           <section class="lec_topic">
            '.$title.'
           </section> 
@@ -103,7 +110,13 @@ function li_getPostsFuture($since, $to) {
           <section class="lec_summary">
            '.$lec_about.' 
           </section> 
-         </section><br />';
+					<section class="lec_tag">
+					'.$lec_tag.'
+					</section>
+					<section class="lec_from">
+					'.$lec_from.'
+					</section>
+         </section><br/>';
           }
         } else  {
             echo '<section class="lec_null">没有文章哦！</section>'; 
